@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos en Tiempo Real</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <h1>Productos en Tiempo Real</h1>
+
+    <form id="productForm">
+        <label for="name">Nombre del producto:</label>
+        <input type="text" id="name" name="name" required>
+        
+        <label for="price">Precio:</label>
+        <input type="number" id="price" name="price" required>
+        
+        <button type="submit">Agregar producto</button>
+    </form>
+
+    <ul id="productList">
+
+    </ul>
+
+    <script>
+        const socket = io();
+        const productList = document.getElementById('productList');
+        const productForm = document.getElementById('productForm');
+
+        socket.on('newProduct', (product) => {
+            const newItem = document.createElement('li');
+            newItem.id = product._id; 
+            newItem.innerHTML = `
+                ${product.name} - $${product.price}
+                <button onclick="deleteProduct('${product._id}')">Eliminar</button>
+            `;
+            productList.appendChild(newItem);
+        });
+
+        socket.on('deleteProduct', (product) => {
+            const productToRemove = document.getElementById(product._id);
+            if (productToRemove) {
+                productList.removeChild(productToRemove);
+            }
+        });
+
+        productForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(productForm);
+            const productData = {
+                name: formData.get('name'),
+                price: formData.get('price')
+            };
+
+            fetch('/api/products', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(productData)
+            })
+            .then(response => response.json())
+            .then(product => {
+                console.log('Producto agregado:', product);
+                productForm.reset();
+            })
+            .catch(error => {
+                console.error('Error al agregar el producto:', error);
+            });
+        });
+
+        function deleteProduct(productId) {
+            fetch(`/api/products/${productId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Producto eliminado');
+                } else {
+                    console.error('Error al eliminar el producto');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>

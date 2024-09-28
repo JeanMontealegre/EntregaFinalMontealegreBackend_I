@@ -1,0 +1,27 @@
+{
+  "name": "entrega-final",
+  "version": "1.0.0",
+  "description": "entregaFinalMontealegreBackendI",
+  "main": "src/app.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.19.2",
+    "express-handlebars": "^8.0.1",
+    "mongoose": "^8.6.1",
+    "mongoose-paginate-v2": "^1.8.3",
+    "multer": "^1.4.5-lts.1",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
+  }
+}
